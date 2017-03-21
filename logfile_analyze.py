@@ -14,7 +14,8 @@ import re
 # build list of log files based on command line target directory and
 # search pattern if no pattern arguments supplied then return all files in
 # target directory
-# old code to remove: logfile_List = glob.glob('**/*.LOGG', recursive=True)
+# old code searchs entire filesystem:
+# logfile_list = glob.glob('**/*.LOGG', recursive=True)
 try:
     assert os.path.isdir(sys.argv[1])
     target_directory = os.path.abspath(sys.argv[1])
@@ -36,7 +37,7 @@ else:
     if search_pattern == '':
         search_pattern = '*'
 
-logfile_List = glob.glob(target_directory + os.sep + '*' + search_pattern + '*')
+logfile_list = glob.glob(target_directory + os.sep + '*' + search_pattern + '*')
 
 # Filter file list to include only log files up to 7 days old
 today = datetime.date.today()
@@ -45,22 +46,22 @@ day_first = today - datetime.timedelta(days=8)
 day_last = today - datetime.timedelta(days=1)
 print(day_first)
 print(day_last)
-for log in logfile_List:
+for log in logfile_list:
     fileDate = datetime.date.fromtimestamp(os.path.getmtime(log))
     print(fileDate)
     if day_first <= fileDate <= day_last:
         filtered_list.append(log)
-logfile_List = filtered_list
+logfile_list = filtered_list
 
 # get amount and size of files
-file_count = len(logfile_List)
-log_meta = {log: os.path.getsize(log) for log in logfile_List
+file_count = len(logfile_list)
+log_meta = {log: os.path.getsize(log) for log in logfile_list
             if not log.endswith('.gz')}
 total_size = sum([int(log_meta[l]) for l in log_meta])
 
 # Unpack .gz files, calculate size, delete unpacked files
 freespace = shutil.disk_usage('/').free
-for log in logfile_List:
+for log in logfile_list:
     if log.endswith('.gz'):
         gunzip_out = subprocess.check_output(['gunzip', '-l', log])
         regex_pattern = re.compile(r'(\d+)')
