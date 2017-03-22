@@ -44,8 +44,6 @@ today = datetime.date.today()
 filtered_list = []
 day_first = today - datetime.timedelta(days=8)
 day_last = today - datetime.timedelta(days=1)
-print(day_first)
-print(day_last)
 for log in logfile_list:
     fileDate = datetime.date.fromtimestamp(os.path.getmtime(log))
     print(fileDate)
@@ -91,10 +89,16 @@ def human_readable_size(file_size):
             return '{0:.1f} {1}'.format(file_size, size)
         file_size /= 1000
 
-# TODO: forward files and metadata
+
+def daily_average(input_size):
+    return str(human_readable_size(input_size / 7) + ' daily average')
+
+
+def logfiles_sum_size(files_size):
+    return str(human_readable_size(files_size)) + ' total'
 
 # print to command line for now to test
 print(log_meta.items())
 print(str(file_count) + ' log files')
-print(str(human_readable_size(total_size / 7)) + ' daily average')
-print(str(human_readable_size(total_size)) + ' total')
+print(daily_average(total_size))
+print(logfiles_sum_size(total_size))
