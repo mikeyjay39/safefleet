@@ -79,13 +79,22 @@ for log in logfile_list:
         log_meta[log] = gz_size
         os.remove('temp')
 
-# TODO: Format file size
-# sizes = {'KB':1024, 'MB':1024*1024, 'GB':1024*1024*1024, 'TB':1024**4}
+# Format file size
+size_format = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB']
+
+
+def human_readable_size(file_size):
+    '''Convert a file size to human readable'''
+
+    for size in size_format:
+        if file_size < 1000:
+            return '{0:.1f} {1}'.format(file_size, size)
+        file_size /= 1000
 
 # TODO: forward files and metadata
 
 # print to command line for now to test
 print(log_meta.items())
 print(str(file_count) + ' log files')
-print(str(round(total_size / 7)) + 'Bytes daily average')
-print(str(total_size) + 'Bytes total')
+print(str(human_readable_size(total_size / 7)) + ' daily average')
+print(str(human_readable_size(total_size)) + ' total')
